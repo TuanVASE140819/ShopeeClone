@@ -1,5 +1,5 @@
+import Footer from 'src/components/Footer'
 import RegisterHeader from 'src/components/RegisterHeader'
-import Footer from 'src/components/RegisterHeader/Footer'
 
 interface Props {
   children?: React.ReactNode
