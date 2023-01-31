@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
-import { rules } from 'src/utils/rules'
+import { getRules } from 'src/utils/rules'
 
 interface FormData {
   email: string
@@ -10,14 +10,26 @@ interface FormData {
 export default function Register() {
   const {
     register,
+    watch,
     handleSubmit,
+    getValues,
     formState: { errors }
   } = useForm<FormData>()
 
-  const onSubmit = handleSubmit((data) => {
-    // console.log(data)
-  })
-  console.log('error', errors)
+  const rules = getRules(getValues)
+
+  const onSubmit = handleSubmit(
+    (data) => {
+      // console.log(data)
+    },
+    (data) => {
+      const password = getValues('password')
+      console.log(password)
+    }
+  )
+
+  const formValues = watch()
+  console.log(formValues)
   return (
     <div className='bg-orange'>
       <div className='mx-auto max-w-7xl px-4'>
@@ -39,16 +51,20 @@ export default function Register() {
                   type='password'
                   className='focus::border-gray-500 rouded-sm w-full border border-gray-300 p-3 outline-none focus:shadow-sm'
                   placeholder='password'
+                  autoComplete='on'
                   {...register('password', rules.password)}
                 />
-                <div className='.min-h-[1.25rem].text-sm mt-1 text-red-600'>{errors .password?.message}</div>
+                <div className='.min-h-[1.25rem].text-sm mt-1 text-red-600'>{errors.password?.message}</div>
               </div>
               <div className='mt-3'>
                 <input
                   type='password'
                   className='focus::border-gray-500 rouded-sm w-full border border-gray-300 p-3 outline-none focus:shadow-sm'
                   placeholder='Comfirm Password'
-                  {...register('comfirm_password', rules.comfirm_password)}
+                  autoComplete='on'
+                  {...register('comfirm_password', {
+                    ...rules.comfirm_password
+                  })}
                 />
                 <div className='.min-h-[1.25rem].text-sm mt-1 text-red-600'>{errors.comfirm_password?.message}</div>
               </div>

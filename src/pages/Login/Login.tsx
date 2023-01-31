@@ -31,6 +31,7 @@ export default function Login() {
                 <input
                   type='password'
                   name='password'
+                  autoComplete='on'
                   className='focus::border-gray-500 rouded-sm w-full border border-gray-300 p-3 outline-none focus:shadow-sm'
                   placeholder='password'
                 />
