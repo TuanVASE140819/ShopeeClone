@@ -1,4 +1,4 @@
-const theme = require('tailwindcss/defaultTheme')
+const plugin = require('tailwindcss/plugin')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -14,7 +14,7 @@ module.exports = {
     }
   },
   plugins: [
-    plugins(function ({ addComponents }) {
+    plugin(function ({ addComponents,theme }) {
       addComponents({
         '.container': {
           maxWidth: theme('columns.7xl'),
