@@ -1,4 +1,5 @@
 import { RegisterOptions, UseFormGetValues } from 'react-hook-form'
+import * as yup from 'yup'
 
 type Rules = { [key in 'email' | 'password' | 'comfirm_password']?: RegisterOptions }
 
@@ -52,3 +53,27 @@ export const getRules = (getValues?: UseFormGetValues<any>): Rules => ({
       typeof getValues === 'function' ? (value) => value === getValues('password') || 'Password không khớp' : undefined
   }
 })
+
+export const schema = yup.object({
+  email: yup
+    .string()
+    .required('Email là bắt buộc')
+    .email('Email không đúng định dạng')
+    .min(5, 'Email từ 5 đến 150 ký tự')
+    .max(150, 'Email từ 5 đến 150 ký tự'),
+  password: yup
+    .string()
+    .required('Password là bắt buộc')
+    .min(6, 'Password từ 6 đến 150 ký tự')
+    .max(150, 'Password từ 6 đến 150 ký tự'),
+  comfirm_password: yup
+    .string()
+    .required('Nhập lại password là bắt buộc')
+    .min(6, 'Password từ 6 đến 150 ký tự')
+    .max(150, 'Password từ 6 đến 150 ký tự')
+    .oneOf([yup.ref('password')], 'Password không khớp')
+})
+
+const LoginSchema = schema.omit(['comfirm_password'])
+
+export type Schema = yup.InferType<typeof schema>
