@@ -1,16 +1,19 @@
 import { useForm } from 'react-hook-form'
-import { schema } from 'src/utils/rules'
 import { Link } from 'react-router-dom'
-import Input from 'src/components/Input'
-import { getRules } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { resolve } from 'path'
+
+import { schema, Schema } from 'src/utils/rules'
+import Input from 'src/components/Input'
+import { registerAccount } from 'src/apis/auth.api'
+import omit from 'lodash/omit'
+import { useMutation } from '@tanstack/react-query'
 
 interface FormData {
   email: string
   password: string
-  comfirm_password: string
+  confirm_password: string
 }
+
 export default function Register() {
   const {
     register,
@@ -22,15 +25,18 @@ export default function Register() {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = handleSubmit(
-    (data) => {
-      // console.log(data)
-    },
-    (data) => {
-      const password = getValues('password')
-      console.log(password)
-    }
-  )
+  const registerAccountMutation = useMutation({
+    mutationFn: (body: Omit<FormData, 'confirm_password'>) => registerAccount(body)
+  })
+
+  const onSubmit = handleSubmit((data) => {
+    const body = omit(data, ['confirm_password'])
+    registerAccountMutation.mutate(body, {
+      onSuccess: (data) => {
+        console.log(data)
+      }
+    })
+  })
 
   const formValues = watch()
   console.log(formValues)
@@ -59,13 +65,13 @@ export default function Register() {
                 placeholder='password'
               />
               <Input
-                name='comfirm_password'
+                name='confirm_password'
                 register={register}
                 type='password'
                 autoComplete='on'
                 className='mt-3'
-                errorMessage={errors.comfirm_password?.message}
-                placeholder='Comfirm Password'
+                errorMessage={errors.confirm_password?.message}
+                placeholder='Confirm Password'
               />
               <div className='mt-3'>
                 <button className='lex  w-full items-center justify-center bg-red-500 py-4 px-2 text-sm uppercase text-white hover:bg-red-600'>
