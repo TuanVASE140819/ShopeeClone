@@ -1,10 +1,38 @@
 import { Link, useMatch } from 'react-router-dom'
+import { useRef, useState } from 'react'
+import { arrow, FloatingPortal, shift, useFloating, offset } from '@floating-ui/react-dom-interactions'
+import { motion, AnimatePresence } from 'framer-motion'
+
 export default function Header() {
+  const [open, setOpen] = useState(true)
+  const arrowRef = useRef<HTMLElement>(null)
+  const { x, y, reference, floating, strategy, middlewareData } = useFloating({
+    middleware: [
+      offset(6),
+      shift(),
+      arrow({
+        element: arrowRef
+      })
+    ]
+  })
+
+  const showPopover = () => {
+    setOpen(true)
+  }
+  const hidePopover = () => {
+    setOpen(false)
+  }
+
   return (
     <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2 text-white'>
       <div className='container'>
         <div className='flex justify-end'>
-          <div className='flex cursor-pointer items-center py-1 hover:text-gray-300'>
+          <div
+            className='flex cursor-pointer items-center py-1 hover:text-gray-300'
+            ref={reference}
+            onMouseEnter={showPopover}
+            onMouseLeave={hidePopover}
+          >
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
@@ -30,7 +58,43 @@ export default function Header() {
             >
               <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' />
             </svg>
+            <FloatingPortal>
+              <AnimatePresence>
+                {open && (
+                  <motion.div
+                    ref={floating}
+                    style={{
+                      position: strategy,
+                      top: y ?? 0,
+                      left: x ?? 0,
+                      width: 'max-content',
+                      transformOrigin: `${middlewareData.arrow?.x}px top`
+                    }}
+                    initial={{ opacity: 0, transform: 'scale(0)' }}
+                    animate={{ opacity: 1, transform: 'scale(1)' }}
+                    exit={{ opacity: 0, transform: 'scale(0)' }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <span
+                      ref={arrowRef}
+                      className='absolute h-4 w-4 rotate-45 transform bg-white'
+                      style={{
+                        left: middlewareData?.arrow?.x,
+                        top: middlewareData?.arrow?.y
+                      }}
+                    />
+                    <div className='shodow-md rounder-sm relative border border-gray-200 bg-white'>
+                      <div className='flex flex-col py-2 px-3'>
+                        <button className='py-2 px-3  hover:text-orange'>Tiếng Việt</button>
+                        <button className='mt-2 py-2 px-3 hover:text-orange'>English</button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </FloatingPortal>
           </div>
+
           <div className='ml-6 flex cursor-pointer items-center py-1 hover:text-gray-300'>
             <div className='mr-2 h-6 w-6 flex-shrink-0'>
               <img
@@ -62,13 +126,13 @@ export default function Header() {
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
                   viewBox='0 0 24 24'
-                  stroke-width='1.5'
+                  strokeWidth='1.5'
                   stroke='currentColor'
-                  class='h-6 w-6'
+                  className='h-6 w-6'
                 >
                   <path
-                    stroke-linecap='round'
-                    stroke-linejoin='round'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
                     d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
                   />
                 </svg>
@@ -81,13 +145,13 @@ export default function Header() {
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
                 viewBox='0 0 24 24'
-                stroke-width='1.5'
+                strokeWidth='1.5'
                 stroke='currentColor'
-                class='h-6 w-6'
+                className='h-6 w-6'
               >
                 <path
-                  stroke-linecap='round'
-                  stroke-linejoin='round'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
                   d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
                 />
               </svg>
